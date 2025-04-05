@@ -1,3 +1,4 @@
+import { ResultData } from '@/utils/resultData';
 import { Injectable, Logger } from '@nestjs/common';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob, CronTime } from 'cron';
@@ -12,17 +13,9 @@ export class TasksService {
     const jobs = this.schedulerRegistry.getCronJobs();
     const jobNames = Array.from(jobs.keys());
     if (jobNames.length > 0) {
-      return {
-        code: 200,
-        message: '定时任务列表',
-        data: jobNames,
-      };
+      return ResultData.success(jobNames, '定时任务列表');
     } else {
-      return {
-        code: 200,
-        message: '没有定时任务',
-        data: [],
-      };
+      return ResultData.fail(undefined, '没有定时任务');
     }
   }
 
@@ -31,20 +24,14 @@ export class TasksService {
     try {
       const jobList = this.schedulerRegistry.getCronJobs();
       if (jobList.has(name)) {
-        return {
-          code: 400,
-          message: '定时任务已存在',
-        };
+        return ResultData.fail(400, '定时任务已存在');
       }
 
       const job = new CronJob(cronExpression, callback, null, true);
       this.schedulerRegistry.addCronJob(name, job);
       job.start();
 
-      return {
-        code: 200,
-        message: '定时任务添加成功',
-      };
+      return ResultData.success('定时任务添加成功');
     } catch (error) {}
   }
 
@@ -56,81 +43,56 @@ export class TasksService {
     const job = list.get(name);
     console.log('job', job);
     if (!job) {
-      return {
-        code: 400,
-        message: '定时任务不存在',
-      };
+      return ResultData.fail(400, '定时任务不存在');
     }
     this.logger.log(`Cron job ${name} deleted`);
     this.schedulerRegistry.deleteCronJob(name);
-    return {
-      code: 200,
-      message: '定时任务删除成功',
-    };
+    return ResultData.success('定时任务删除成功');
   }
 
   // 暂停定时任务
   pauseCronJob(name: string) {
     const list = this.schedulerRegistry.getCronJobs();
     if (list.get(name) === undefined) {
-      return {
-        code: 400,
-        message: `${name} job does not exist`,
-      };
+      return ResultData.fail(400, '定时任务不存在');
     }
 
     const job = this.schedulerRegistry.getCronJob(name);
 
     if (!job.running) {
-      return {
-        code: 400,
-        message: `${name} job is already paused`,
-      };
+      return ResultData.fail(400, '定时任务已暂停');
     }
     job.stop();
-    this.logger.log(`Cron job ${name} paused`);
-    return {
-      code: 200,
-      message: `Cron job ${name} paused`,
-    };
+
+    return ResultData.success('定时任务暂停成功');
   }
   // 恢复定时任务
   resumeCronJob(name: string) {
     const list = this.schedulerRegistry.getCronJobs();
     if (list.get(name) === undefined) {
-      return {
-        code: 400,
-        message: `${name} job does not exist`,
-      };
+      return ResultData.fail(400, '定时任务不存在');
     }
 
     const job = this.schedulerRegistry.getCronJob(name);
     if (job.running) {
-      return {
-        code: 400,
-        message: `${name} job is already running`,
-      };
+      return ResultData.fail(400, '定时任务已恢复');
     }
-    this.logger.log(`Cron job ${name} resumed`);
 
     job.start();
-    return {
-      code: 200,
-      message: `Cron job ${name} resumed`,
-    };
+    return ResultData.success(`定时任务 ${name} 恢复成功`);
   }
 
   // 更新定时任务
   updateCronJob(name: string, cronExpression: string) {
-    const job = this.schedulerRegistry.getCronJob(name);
-    if (job) {
-      job.setTime(new CronTime(cronExpression));
-      job.start();
-      this.logger.log(
-        `Cron job ${name} updated with new expression: ${cronExpression}`,
-      );
-    } else {
-      this.logger.warn(`Cron job ${name} not found`);
+    const list = this.schedulerRegistry.getCronJobs();
+    if (list.get(name) === undefined) {
+      return ResultData.fail(400, '定时任务不存在');
     }
+
+    const job = this.schedulerRegistry.getCronJob(name);
+
+    job.setTime(new CronTime(cronExpression));
+    job.start();
+    return ResultData.success('定时任务更新成功');
   }
 }

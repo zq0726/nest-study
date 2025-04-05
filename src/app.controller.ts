@@ -47,7 +47,7 @@ export class AppController {
   }
 
   // 更新定时任务
-  @Get('updateTask')
+  @Post('updateTask')
   updateTask(@Body() body) {
     return this.tasksService.updateCronJob(body.name, body.cronExpression);
   }
