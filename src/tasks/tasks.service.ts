@@ -37,11 +37,8 @@ export class TasksService {
 
   // 删除定时任务
   deleteCronJob(name: string) {
-    console.log('name', name);
     const list = this.schedulerRegistry.getCronJobs();
-    console.log('list', list);
     const job = list.get(name);
-    console.log('job', job);
     if (!job) {
       return ResultData.fail(400, '定时任务不存在');
     }

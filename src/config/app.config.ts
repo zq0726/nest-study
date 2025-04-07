@@ -37,7 +37,9 @@ export const init = (app: INestApplication) => {
   // 在使用前 应配置会话存储 和 csrf 密钥
   // app.use(csurf());
 
-  console.log('version', process.env.version);
+  // 配置跨越
+  app.enableCors();
 
+  //配置 swagger
   setupSwagger(app);
 };

@@ -42,3 +42,10 @@ my-nest-project/
 >── README.md                # 项目说明文件
 >── tsconfig.json            # TypeScript 配置文件
 >── ...                      # 其他项目文件
+
+
+## 需要获取 header 中token 的数据
+```
+@Request() req 
+req.user
+```

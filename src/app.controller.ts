@@ -1,10 +1,19 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { AppService } from './app.service';
 import { TasksService } from './tasks/tasks.service';
 import { ApiTags } from '@nestjs/swagger';
 import { LocalAuthGuard } from './modules/auth/local-auth.guard';
 import { AuthService } from './modules/auth/auth.service';
 import { Public } from './modules/auth/public.decorator';
+import { RedisService } from './redis/redis.service';
 
 @Public()
 @ApiTags('公共模块')
@@ -14,6 +23,7 @@ export class AppController {
     private readonly appService: AppService,
     private readonly tasksService: TasksService,
     private readonly authService: AuthService,
+    private readonly redisService: RedisService,
   ) {}
 
   @Get()
@@ -23,9 +33,8 @@ export class AppController {
 
   @UseGuards(LocalAuthGuard)
   @Post('/login')
-  async login(@Body() body) {
-    console.log('有点意思', body);
-    return this.authService.login(body);
+  async login(@Request() req) {
+    return this.authService.login(req.user);
   }
 
   @Get('tasksList')
@@ -63,5 +72,15 @@ export class AppController {
   @Post('updateTask')
   updateTask(@Body() body) {
     return this.tasksService.updateCronJob(body.name, body.cronExpression);
+  }
+
+  @Post('setRedis')
+  setRedis() {
+    return this.redisService.set('test', 'hello');
+  }
+
+  @Get('getRedis')
+  getRedis() {
+    return this.redisService.get('test');
   }
 }
