@@ -1,14 +1,19 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
 import { TasksService } from './tasks/tasks.service';
 import { ApiTags } from '@nestjs/swagger';
+import { LocalAuthGuard } from './modules/auth/local-auth.guard';
+import { AuthService } from './modules/auth/auth.service';
+import { Public } from './modules/auth/public.decorator';
 
+@Public()
 @ApiTags('公共模块')
 @Controller()
 export class AppController {
   constructor(
     private readonly appService: AppService,
     private readonly tasksService: TasksService,
+    private readonly authService: AuthService,
   ) {}
 
   @Get()
@@ -16,7 +21,13 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  // 获取所有定时任务
+  @UseGuards(LocalAuthGuard)
+  @Post('/login')
+  async login(@Body() body) {
+    console.log('有点意思', body);
+    return this.authService.login(body);
+  }
+
   @Get('tasksList')
   getTasksList() {
     return this.tasksService.getCronJobs();
