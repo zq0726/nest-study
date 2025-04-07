@@ -1,9 +1,21 @@
 import { ExceptionsFilter } from '@/common/filters/exceptions/exceptions.filter';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import {
+  INestApplication,
+  ValidationPipe,
+  VersioningType,
+} from '@nestjs/common';
 import * as compression from 'compression';
 import * as helmet from 'helmet';
+// import * as csurf from 'csurf';
 
 export const init = (app: INestApplication) => {
+  // 配置项目版本
+  app.enableVersioning({
+    type: VersioningType.URI,
+    prefix: 'v',
+    defaultVersion: process.env.version,
+  });
+
   // 启用 全局验证管道
   // 通过 @nestjs/common 中的 ValidationPipe 来实现
   app.useGlobalPipes(new ValidationPipe());
@@ -12,8 +24,14 @@ export const init = (app: INestApplication) => {
   app.useGlobalFilters(new ExceptionsFilter());
 
   // 使用压缩中间件
-  app.use(compression);
+  app.use(compression());
 
   // 使用 Helmet 保护http
-  app.use(helmet);
+  app.use(helmet.default());
+
+  // 使用 csurf 进行 csrf 保护
+  // 在使用前 应配置会话存储 和 csrf 密钥
+  // app.use(csurf());
+
+  console.log('version', process.env.version);
 };

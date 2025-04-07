@@ -7,7 +7,7 @@ import { init } from './config/app.config';
 async function bootstrap() {
   const app: INestApplication = await NestFactory.create(AppModule);
 
-  const appPort = process.env.APP_PORT || 3700;
+  const appPort = process.env.port || 3700;
 
   // 一些公共配置
   init(app);
@@ -19,7 +19,7 @@ async function bootstrap() {
       ══════════════════════════════════════════════
                                                     
         ${pc.yellow('NestJS Server is running!')}   
-        ${pc.yellow('http://localhost:3700')}      
+        ${pc.yellow(`http://localhost:${appPort}`)}      
       `,
     ),
   );

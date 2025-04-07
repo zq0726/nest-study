@@ -6,10 +6,15 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { UserModule } from './modules/user/user.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TransformInterceptor } from './common/interceptors/transform/transform.interceptor';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    ScheduleModule.forRoot(), //配置定时器
+    //配置环境变量
+    ConfigModule.forRoot(),
+    //配置定时器
+    ScheduleModule.forRoot(),
+
     TasksModule,
     UserModule,
   ],
