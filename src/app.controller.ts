@@ -1,7 +1,9 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { AppService } from './app.service';
 import { TasksService } from './tasks/tasks.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('公共模块')
 @Controller()
 export class AppController {
   constructor(

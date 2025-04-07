@@ -7,6 +7,7 @@ import {
 import * as compression from 'compression';
 import * as helmet from 'helmet';
 // import * as csurf from 'csurf';
+import { setupSwagger } from '@/common/swagger/setup';
 
 export const init = (app: INestApplication) => {
   // 配置项目版本
@@ -15,6 +16,9 @@ export const init = (app: INestApplication) => {
     prefix: 'v',
     defaultVersion: process.env.version,
   });
+
+  // 配置全局路由前缀
+  app.setGlobalPrefix('api');
 
   // 启用 全局验证管道
   // 通过 @nestjs/common 中的 ValidationPipe 来实现
@@ -34,4 +38,6 @@ export const init = (app: INestApplication) => {
   // app.use(csurf());
 
   console.log('version', process.env.version);
+
+  setupSwagger(app);
 };
