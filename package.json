@@ -19,7 +19,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prepare": "husky",
-    "commit": "git add . && git cz"
+    "commit": "git add . && git cz",
+    "push": "git push"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -33,6 +34,7 @@
     "compression": "^1.8.0",
     "cron": "3.5.0",
     "dayjs": "^1.11.13",
+    "helmet": "^8.1.0",
     "picocolors": "^1.1.1",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1"

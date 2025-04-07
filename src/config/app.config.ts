@@ -1,6 +1,7 @@
 import { ExceptionsFilter } from '@/common/filters/exceptions/exceptions.filter';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as compression from 'compression';
+import * as helmet from 'helmet';
 
 export const init = (app: INestApplication) => {
   // 启用 全局验证管道
@@ -12,4 +13,7 @@ export const init = (app: INestApplication) => {
 
   // 使用压缩中间件
   app.use(compression);
+
+  // 使用 Helmet 保护http
+  app.use(helmet);
 };
